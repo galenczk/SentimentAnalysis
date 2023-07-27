@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn{
+    @apply inline-block rounded bg-emerald-600 px-6 pb-2 pt-2.5 text-xs font-bold uppercase leading-normal text-white;
+}
