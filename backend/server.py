@@ -22,11 +22,26 @@ def server():
 @app.route('/analyze', methods=['POST'])
 def analyze():
     data = request.json
-    text = data.get('text_input')
+    text = []
+    text.append(data.get('text_input'))
 
-    response = sentiment.analyze(text)
+    analysis = sentiment.analyze(text)
 
-    return response
+    answer = {
+        "senti": "",
+        "prob": "",
+    }
+
+    # response[0] = probability of text being NEGATIVE
+    # response[1] = probablity of text being POSITIVE
+    if analysis[0] > analysis[1]:
+        answer["senti"] = "NEGATIVE"
+        answer["prob"] = str(analysis[0])
+    else:
+        answer["senti"] = "POSITIVE"
+        answer["prob"] = str(analysis[1])
+
+    return answer
 
 
 if __name__ == '__main__':

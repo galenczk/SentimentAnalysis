@@ -1,29 +1,37 @@
-from transformers import pipeline
+"""https://huggingface.co/learn/nlp-course/en/chapter2/2?fw=pt"""
+
+import torch
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 
 class Sentiment:
     def __init__(self) -> None:
-        self.pipe = pipeline(
-            "text-classification",
-            model="nlptown/bert-base-multilingual-uncased-sentiment",
-            device=0,
-        )
+        # A checkpoint is a dictionary of pretrained weights and biases that is
+        # ready to be loaded into a model architecture.
+        self.checkpoint = "distilbert-base-uncased-finetuned-sst-2-english"
 
-        self.tones = [
-            "Very Negative",
-            "Negative",
-            "Neutral",
-            "Positive",
-            "Very Positive",
-        ]
+        # A model generally refers to a neural network architecture and its
+        # associated weights and biases.  Here we are loading an architecture
+        # and loading it with the weights and biases above.
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            self.checkpoint)
 
-    def analyze(self, text):
-        response = self.pipe(text)[0]
+        # A tokenizer splits input into easily digestible pieces for the model
+        # to intake.
+        self.tokenizer = AutoTokenizer.from_pretrained(self.checkpoint)
 
-        star_number = int(response["label"][0])
+    def analyze(self, inputs):
 
-        sentiment_desc = self.tones[star_number - 1]
+        # Here we apply the tokenizer to the input.
+        tokenized_input = self.tokenizer(inputs, return_tensors="pt")
 
-        response["description"] = sentiment_desc
+        # Here we run the tokenized input through the model to get the
+        # probability distribution of the text having a positive or negative
+        # sentiment.
+        output = self.model(**tokenized_input)
 
-        return response
+        # The raw output of the model is non-normalized. This step results in
+        # the probabilities that will ultimately be reported.
+        predictions = torch.nn.functional.softmax(output.logits, dim=1)
+
+        return predictions[0].tolist()
