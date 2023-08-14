@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
-from sentiment import Sentiment
+from huggingFacePipeline import Sentiment
 
 app = Flask('server')
 CORS(app)
