@@ -1,6 +1,8 @@
 from flask import Flask, request
 from flask_cors import CORS
 from huggingFacePipeline import Sentiment
+from myModelPipeline import myModelSentiment
+import torch
 
 app = Flask('server')
 CORS(app)
@@ -8,7 +10,9 @@ CORS(app)
 # Debug mode
 app.debug = True
 
+# Init two models.
 sentiment = Sentiment()
+mySentiment = myModelSentiment()
 
 
 # ----------ROUTES----------
@@ -18,9 +22,9 @@ def server():
         '<p> Server is running!.... </p>'
     )
 
-
-@app.route('/analyze', methods=['POST'])
-def analyze():
+# Route using HuggingFace pipeline for sentiment analysis.
+@app.route('/huggingface', methods=['POST'])
+def huggingface():
     data = request.json
     text = []
     text.append(data.get('text_input'))
@@ -40,6 +44,37 @@ def analyze():
     else:
         answer["senti"] = "POSITIVE"
         answer["prob"] = str(analysis[1])
+
+    return answer
+
+
+@app.route('/mymodel', methods=['POST'])
+def my_model():
+    data = request.json
+    temp = []
+    temp.append(data.get('text_input'))
+    text = temp[0]
+
+    analysis = mySentiment.analyze(text)
+
+    prob = analysis.item()
+
+    tone = torch.round(torch.sigmoid(analysis))
+
+    print(tone.item())
+    print(prob)
+
+    answer = {
+        "senti": "",
+        "prob": "",
+    }
+
+    if tone.item() > 0:
+        answer["senti"] = "POSITIVE"
+        answer["prob"] = str(analysis)
+    else:
+        answer["senti"] = "NEGATIVE"
+        answer["prob"] = str(analysis)
 
     return answer
 
