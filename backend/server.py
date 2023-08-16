@@ -59,10 +59,10 @@ def my_model():
 
     prob = analysis.item()
 
-    tone = torch.round(torch.sigmoid(analysis))
+    tone = torch.sigmoid(analysis))
 
     print(tone.item())
-    print(prob)
+    print(analysis)
 
     answer = {
         "senti": "",
