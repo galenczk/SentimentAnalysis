@@ -56,25 +56,19 @@ def my_model():
     text = temp[0]
 
     analysis = mySentiment.analyze(text)
+    
+    senti = int(analysis.item())
 
-    prob = analysis.item()
-
-    tone = torch.sigmoid(analysis))
-
-    print(tone.item())
-    print(analysis)
+    print(senti)
 
     answer = {
         "senti": "",
-        "prob": "",
     }
 
-    if tone.item() > 0:
-        answer["senti"] = "POSITIVE"
-        answer["prob"] = str(analysis)
-    else:
+    if senti == 0:
         answer["senti"] = "NEGATIVE"
-        answer["prob"] = str(analysis)
+    else:
+        answer["senti"] = "POSITIVE"
 
     return answer
 

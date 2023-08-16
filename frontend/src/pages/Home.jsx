@@ -17,7 +17,7 @@ export default function Home() {
                 let probability = (answer.prob * 100).toFixed(2);
                 printToOutput(`Input: "${text.text_input}"`);
                 printToOutput(
-                    `This statement was ${sentiment}, with a ${probability} probability.`
+                    `BERT: This statement was ${sentiment}, with a ${probability} probability.`
                 );
             }
         }
@@ -30,7 +30,9 @@ export default function Home() {
         );
         if (response.status === 200) {
             const answer = response.data;
-            console.log(answer);
+            console.log(answer.senti);
+            printToOutput(`Input: "${text.text_input}"`)
+            printToOutput(`My Model: This statement was ${answer.senti}!`)
         }
     }
 
@@ -66,7 +68,7 @@ export default function Home() {
                                 : "btn-huggingface"
                         }
                         onClick={() => handleTabClick(1)}>
-                        HuggingFace Pipeline
+                        BERT MODEL
                     </button>
                     <button
                         className={
