@@ -5,21 +5,20 @@ from torch import nn
 
 # NN copied over from myModel
 class TextClassificationModel(nn.Module):
-    def __init__(self, vocab_size, embed_dim=512, hidden_dim=256, num_classes=1, num_lstm_layers=2, dropout_prob=0.2):
+    def __init__(self, vocab_size=30522, embed_dim=512, hidden_dim=256, num_classes=1, num_lstm_layers=4, dropout_prob=0.2):
         super(TextClassificationModel, self).__init__()
         # Embedding layers convert word values into more complicated vectors.
         # This is a type of feature extraction or definition.
         self.embedding = nn.Embedding(vocab_size, embed_dim)
 
-        # Long short-term memory layer. An abstracted layer that contains
+        # Long short-term memory layer. An abstracted layer that contains 
         # several gates that perform different tasks on sequential data.
-        # Common in natural language processing tasks.
-        self.lstm = nn.LSTM(embed_dim, hidden_dim, num_layers=num_lstm_layers,
-                            bidirectional=True, dropout=dropout_prob)
-
+        # Common in natural language processing tasks. 
+        self.lstm = nn.LSTM(embed_dim, hidden_dim, num_layers=num_lstm_layers, bidirectional=True, dropout=dropout_prob)
+        
         # Fully connected layer, maps NN output thusfar to final classification.
         self.fc = nn.Linear(hidden_dim * 2, num_classes)
-
+        
         # Initialize the NN with random weights and biases.
         self.init_weights()
 
@@ -36,7 +35,7 @@ class TextClassificationModel(nn.Module):
 
         # Pass text through the embedding layer.
         embedded = self.embedding(text)
-
+        
         # Pass text through lstm layers.
         output, (hidden, cell) = self.lstm(embedded)
 
@@ -70,7 +69,7 @@ class myModelSentiment:
         tokenized_input = self.tokenizer.tokenize(text)
 
         # Create input tensor with text input. Process similar to myModel.
-        MAX_LEN = 256
+        MAX_LEN = 512
         input_id = self.tokenizer.convert_tokens_to_ids(tokenized_input)
         input_id = torch.tensor(
             input_id[:MAX_LEN] + [0] * (MAX_LEN - len(input_id)))
@@ -88,3 +87,7 @@ class myModelSentiment:
         output = self.model(input_id, attention_mask)
 
         return output
+    
+sentiment = myModelSentiment()
+
+print(sentiment.analyze("this is the worst thing ever"))
