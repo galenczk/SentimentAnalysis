@@ -32,7 +32,7 @@ export default function Home() {
             const answer = response.data;
             console.log(answer.senti);
             printToOutput(`Input: "${text.text_input}"`)
-            printToOutput(`My Model: This statement was ${answer.senti}!`)
+            printToOutput(`My Model: This statement was ${answer.senti}`)
         }
     }
 
