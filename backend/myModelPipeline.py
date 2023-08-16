@@ -59,7 +59,7 @@ class myModelSentiment:
         self.model = TextClassificationModel(len(self.tokenizer))
 
         # Load previously trained parameters.
-        self.model.load_state_dict(torch.load("modelCheckpoint.pt"))
+        self.model.load_state_dict(torch.load("modelCheckpoint_4LSTM_10epochs.pt"))
 
     def process_input(self, text):
         # Standardize input to lowercase.
@@ -86,8 +86,10 @@ class myModelSentiment:
         # Call model to classify.
         output = self.model(input_id, attention_mask)
 
-        return output
+        rounded_output = torch.round(torch.sigmoid(output))
+
+        return rounded_output
     
 sentiment = myModelSentiment()
 
-print(sentiment.analyze("this is the worst thing ever"))
+print(sentiment.analyze("this is the best thing ever"))
